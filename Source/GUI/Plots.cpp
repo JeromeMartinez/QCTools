@@ -300,9 +300,14 @@ Plots::Plots( QWidget *parent, FileInformation* fileInformation ) :
         layout->addLayout(legendLayout, m_plotsCount, 1 );
     }
 
-    auto mapped = m_commentsPlot->canvas()->mapToParent(m_commentsPlot->plotLayout()->canvasRect().topLeft().toPoint());
+    auto mappedTopLeft = m_commentsPlot->canvas()->mapToParent(m_commentsPlot->plotLayout()->canvasRect().topLeft().toPoint());
+    auto mappedBottomRight = m_commentsPlot->canvas()->mapToParent(m_commentsPlot->plotLayout()->canvasRect().bottomRight().toPoint());
+
+    qDebug() << "mappedTopLeft: " << mappedTopLeft;
+    qDebug() << "mappedBottomRight: " << mappedBottomRight;
+
     m_PanelsView = new PanelsView(this);
-    m_PanelsView->setContentsMargins(mapped.x(), 0, 0, 0);
+    m_PanelsView->setContentsMargins(mappedTopLeft.x(), 0, m_PanelsView->width() - m_commentsPlot->width(), 0);
     m_PanelsView->setMinimumHeight(100);
 
     connect(this, &Plots::visibleFramesChanged, m_PanelsView, &PanelsView::setVisibleFrames);
@@ -616,7 +621,17 @@ bool Plots::eventFilter( QObject *object, QEvent *event )
 {
     if ( event->type() == QEvent::Move || event->type() == QEvent::Resize )
     {
-        plot(0, 0)->layout()->update();
+        if(m_PanelsView && plot(0, 0))
+            m_PanelsView->setActualWidth(plot(0, 0)->canvas()->contentsRect().width());
+
+        auto canvasRect = m_commentsPlot->plotLayout()->canvasRect();
+        auto mappedTopLeft = m_commentsPlot->canvas()->mapToParent(QPoint(0, 0));
+        auto mappedBottomRight = m_commentsPlot->canvas()->mapToParent(QPoint(canvasRect.width(), canvasRect.height()));
+
+        qDebug() << "mappedTopLeft: " << mappedTopLeft;
+        qDebug() << "mappedBottomRight: " << mappedBottomRight;
+
+        m_PanelsView->setContentsMargins(mappedTopLeft.x(), 0, m_PanelsView->width() - mappedBottomRight.x(), 0);
 
         for ( size_t streamPos = 0; streamPos < m_fileInfoData->Stats.size(); streamPos++ )
             if ( m_fileInfoData->Stats[streamPos] && m_plots[streamPos] )
