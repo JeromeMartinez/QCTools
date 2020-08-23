@@ -18,6 +18,7 @@ public:
 
 public Q_SLOTS:
     void setVisibleFrames(int from, int to);
+    void setActualWidth(int width);
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -27,6 +28,7 @@ Q_SIGNALS:
 private:
     int m_startFrame;
     int m_endFrame;
+    int m_actualWidth;
     std::function<int()> getPanelsCount;
     std::function<int()> getPanelSize;
     std::function<QImage(int)> getPanelImage;
