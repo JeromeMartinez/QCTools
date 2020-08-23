@@ -6,6 +6,7 @@
 
 //---------------------------------------------------------------------------
 
+#include "Core/FFmpeg_Glue.h"
 #include "GUI/Plots.h"
 #include "GUI/Plot.h"
 #include "GUI/PlotLegend.h"
@@ -299,7 +300,19 @@ Plots::Plots( QWidget *parent, FileInformation* fileInformation ) :
         layout->addLayout(legendLayout, m_plotsCount, 1 );
     }
 
-    layout->addWidget( m_scaleWidget, m_plotsCount + 1, 0, 1, 2 );
+    auto mapped = m_commentsPlot->canvas()->mapToParent(m_commentsPlot->plotLayout()->canvasRect().topLeft().toPoint());
+    m_PanelsView = new PanelsView(this);
+    m_PanelsView->setContentsMargins(mapped.x(), 0, 0, 0);
+    m_PanelsView->setMinimumHeight(100);
+
+    connect(this, &Plots::visibleFramesChanged, m_PanelsView, &PanelsView::setVisibleFrames);
+
+    if(m_PanelsView)
+    {
+        layout->addWidget(m_PanelsView, m_plotsCount + 1, 0);
+    }
+
+    layout->addWidget( m_scaleWidget, m_plotsCount + 2, 0, 1, 2 );
 
     // combo box for the axis format
     XAxisFormatBox* xAxisBox = new XAxisFormatBox();
@@ -308,20 +321,28 @@ Plots::Plots( QWidget *parent, FileInformation* fileInformation ) :
         this, SLOT( onXAxisFormatChanged( int ) ) );
 
     int axisBoxRow = layout->rowCount() - 1;
-#if 1
     // one row below to have space enough for bottom scale tick labels
-    layout->addWidget( xAxisBox, m_plotsCount + 1, 1 );
-#else
-    layout->addWidget( xAxisBox, layout_y, 1 );
-#endif
+    layout->addWidget( xAxisBox, m_plotsCount + 2, 1 );
 
     m_playerControl = new PlayerControl();
-    layout->addWidget(m_playerControl, m_plotsCount + 2, 0);
+    layout->addWidget(m_playerControl, m_plotsCount + 3, 0);
 
     layout->setColumnStretch( 0, 10 );
     layout->setColumnStretch( 1, 0 );
 
     m_scaleWidget->setScale( m_timeInterval.from, m_timeInterval.to);
+    m_PanelsView->setProvider([&] {
+        return m_fileInfoData->Glue->GetPanelsCount();
+    }, [&] {
+        return m_fileInfoData->Glue->GetPanelSize();
+    }, [&](int index) -> QImage {
+        FFmpeg_Glue::Image frameImage;
+        frameImage.frame = m_fileInfoData->Glue->GetPanel(index);
+        auto panelImage = QImage(frameImage.data(), frameImage.width(), frameImage.height(), frameImage.linesize(), QImage::Format_RGB888);
+
+        return panelImage;
+    });
+    m_PanelsView->setVisibleFrames(0, numFrames() - 1);
 
     setCursorPos( framePos() );
 }
@@ -342,6 +363,8 @@ const QwtPlot* Plots::plot( size_t streamPos, size_t Group ) const
     return m_plots[streamPos]?m_plots[streamPos][Group]:NULL;
 }
 
+
+
 //---------------------------------------------------------------------------
 void Plots::refresh()
 {
@@ -357,6 +380,7 @@ void Plots::refresh()
             }
         }
 
+    m_PanelsView->refresh();
     setCursorPos( framePos() );
     replotAll();
 
@@ -380,6 +404,8 @@ void Plots::setVisibleFrames( int from, int to , bool force)
         if ( m_timeInterval.to == 0 )
             m_timeInterval.to = stats()->x_Max[m_dataTypeIndex] / stats()->x_Max[0] * to;
     }
+
+    Q_EMIT visibleFramesChanged(from, to);
 }
 
 //---------------------------------------------------------------------------
@@ -590,6 +616,8 @@ bool Plots::eventFilter( QObject *object, QEvent *event )
 {
     if ( event->type() == QEvent::Move || event->type() == QEvent::Resize )
     {
+        plot(0, 0)->layout()->update();
+
         for ( size_t streamPos = 0; streamPos < m_fileInfoData->Stats.size(); streamPos++ )
             if ( m_fileInfoData->Stats[streamPos] && m_plots[streamPos] )
             {
