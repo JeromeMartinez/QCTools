@@ -8,7 +8,7 @@
 #include "preferences.h"
 #include "ui_preferences.h"
 #include "Core/SignalServerConnectionChecker.h"
-#include "Core/Preferences.h"
+#include "Core/PreferencesCore.h"
 #include <QSettings>
 #include <QStandardPaths>
 #include <QMetaType>

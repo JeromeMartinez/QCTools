@@ -135,7 +135,7 @@ public:
                         std::stod(value);
                         return Double;
                     }
-                    catch(const std::exception& ex) {
+                    catch(const std::exception&) {
 
                     }
                 } else {
@@ -143,7 +143,7 @@ public:
                         std::stoi(value);
                         return Int;
                     }
-                    catch(const std::exception& ex) {
+                    catch(const std::exception&) {
 
                     }
                 }

@@ -11,7 +11,7 @@
 
 #include "Core/SignalServer.h"
 #include "Core/FileInformation.h"
-#include "Core/Preferences.h"
+#include "Core/PreferencesCore.h"
 #include "Core/FFmpeg_Glue.h"
 #include <QCoreApplication>
 #include <memory>

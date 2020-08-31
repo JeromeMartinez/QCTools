@@ -1,7 +1,7 @@
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
 
-#include "Core/Preferences.h"
+#include "Core/PreferencesCore.h"
 
 #include <QDialog>
 #include <QList>

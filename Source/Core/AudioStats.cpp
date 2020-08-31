@@ -22,7 +22,6 @@ extern "C"
 
 #include "tinyxml2.h"
 #include <sstream>
-#include <iomanip>
 #include <cstdlib>
 #include <cfloat>
 using namespace tinyxml2;
@@ -327,8 +326,8 @@ string AudioStats::StatsToXML (const activefilters& filters)
     // Per frame (note: the XML header and footer are not created here)
     for (size_t x_Pos=0; x_Pos<x_Current; ++x_Pos)
     {
-        stringstream pkt_pts_time; pkt_pts_time<<fixed<<setprecision(7)<<(x[1][x_Pos]+FirstTimeStamp);
-        stringstream pkt_duration_time; pkt_duration_time<<fixed<<setprecision(7)<<durations[x_Pos];
+        stringstream pkt_pts_time; pkt_pts_time<<fixed<<(x[1][x_Pos]+FirstTimeStamp);
+        stringstream pkt_duration_time; pkt_duration_time<<fixed<<durations[x_Pos];
         stringstream key_frame; key_frame<< (key_frames[x_Pos]? '1' : '0');
 
         Data<<"        <frame media_type=\"audio\"";

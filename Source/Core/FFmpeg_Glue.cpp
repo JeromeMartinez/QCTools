@@ -43,7 +43,6 @@ extern "C"
 }
 
 #include <sstream>
-#include <iomanip>
 #include <cstdlib>
 #include <cfloat>
 //---------------------------------------------------------------------------

@@ -15,7 +15,6 @@ extern "C"
 
 #include "tinyxml2.h"
 #include <sstream>
-#include <iomanip>
 #include <cstdlib>
 #include <cfloat>
 #include <cassert>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Cli\cli.cpp" />
+    <ClCompile Include="..\..\..\Source\Cli\main.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\AudioCore.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\AudioStats.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\AudioStreamStats.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\BlackmagicDeckLink.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\BlackmagicDeckLink_Glue.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\CommonStats.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\CommonStreamStats.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\Core.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\FFmpegVideoEncoder.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\FFmpeg_Glue.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\FileInformation.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\FormatStats.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\PreferencesCore.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\SignalServer.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\SignalServerConnectionChecker.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\StreamsStats.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\TimeCode.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\VideoCore.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\VideoStats.cpp" />
+    <ClCompile Include="..\..\..\Source\Core\VideoStreamStats.cpp" />
+    <ClCompile Include="..\..\..\Source\ThirdParty\qblowfish\qblowfish.cpp" />
+    <ClCompile Include="..\..\..\Source\ThirdParty\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="..\..\QtCreator\qctools-cli\debug\moc_cli.cpp" />
+    <ClCompile Include="..\..\QtCreator\qctools-lib\debug\moc_FFmpegVideoEncoder.cpp" />
+    <ClCompile Include="..\..\QtCreator\qctools-lib\debug\moc_FileInformation.cpp" />
+    <ClCompile Include="..\..\QtCreator\qctools-lib\debug\moc_SignalServer.cpp" />
+    <ClCompile Include="..\..\QtCreator\qctools-lib\debug\moc_SignalServerConnectionChecker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\QtCreator\qctools-lib\debug\moc_predefs.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{B576C8EB-A365-4647-A64C-5F148CC9F2CF}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Qcli</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../../Source;../../../Source/ThirdParty/cqmarkdown;../../../Source/ThirdParty/qblowfish;../../../Source/ThirdParty/tinyxml2;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src\QtAV;C:\Qt\5.9.9\msvc2017_64\include/QtGui;C:\Qt\5.9.9\msvc2017_64\include/QtWidgets;C:\Qt\5.9.9\msvc2017_64\include/QtQml;C:\Qt\5.9.9\msvc2017_64\include/QtNetwork;C:\Qt\5.9.9\msvc2017_64\include/QtCore;C:\Qt\5.9.9\msvc2017_64\include;./;../../../../qwt/src;C:\Programmation\QCTools\Project\QtCreator\qctools-gui\debug;C:\Programmation\QCTools\Project\QtCreator\qctools-gui;C:\Qt\5.9.9\msvc2017_64\include/QtPrintSupport;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src;../../../../zlib;../../../../Blackmagic DeckLink SDK\Win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4018;4996;4267;4129;4244</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Qt\5.9.9\msvc2017_64\lib;../../../../qwt/lib;C:\Compile\qctools\Project\QtCreator\qctools-qtav\lib_win_x86_64;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg/libavformat;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg/libavcodec;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg/libavfilter;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg/libswscale;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg/libavutil;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src;../../../../zlib/contrib/vstudio/vc14/x64/ZlibStat$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>qwtd.lib;QtAVd1.lib;Qt5Cored.lib;Qt5Networkd.lib;Qt5Guid.lib;Qt5Xmld.lib;Qt5Qmld.lib;Qt5Widgetsd.lib;Qt5Networkd.lib;Qt5PrintSupportd.lib;qtmaind.lib;avformat.lib;avcodec.lib;avfilter.lib;swscale.lib;avutil.lib;winmm.lib;ws2_32.lib;imm32.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../../Source;../../../Source/ThirdParty/cqmarkdown;../../../Source/ThirdParty/qblowfish;../../../Source/ThirdParty/tinyxml2;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src\QtAV;C:\Qt\5.9.9\msvc2017_64\include/QtGui;C:\Qt\5.9.9\msvc2017_64\include/QtWidgets;C:\Qt\5.9.9\msvc2017_64\include/QtQml;C:\Qt\5.9.9\msvc2017_64\include/QtNetwork;C:\Qt\5.9.9\msvc2017_64\include/QtCore;C:\Qt\5.9.9\msvc2017_64\include;./;../../../../qwt/src;C:\Programmation\QCTools\Project\QtCreator\qctools-gui\debug;;C:\Programmation\QCTools\Project\QtCreator\qctools-gui;C:\Qt\5.9.9\msvc2017_64\include/QtPrintSupport;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src;../../../../zlib;../../../../Blackmagic DeckLink SDK\Win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../../Source;../../../Source/ThirdParty/cqmarkdown;../../../Source/ThirdParty/qblowfish;../../../Source/ThirdParty/tinyxml2;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src\QtAV;C:\Qt\5.9.9\msvc2017_64\include/QtGui;C:\Qt\5.9.9\msvc2017_64\include/QtWidgets;C:\Qt\5.9.9\msvc2017_64\include/QtQml;C:\Qt\5.9.9\msvc2017_64\include/QtNetwork;C:\Qt\5.9.9\msvc2017_64\include/QtCore;C:\Qt\5.9.9\msvc2017_64\include;./;../../../../qwt/src;C:\Programmation\QCTools\Project\QtCreator\qctools-gui\debug;;C:\Programmation\QCTools\Project\QtCreator\qctools-gui;C:\Qt\5.9.9\msvc2017_64\include/QtPrintSupport;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src;../../../../zlib;../../../../Blackmagic DeckLink SDK\Win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../../Source;../../../Source/ThirdParty/cqmarkdown;../../../Source/ThirdParty/qblowfish;../../../Source/ThirdParty/tinyxml2;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg\libavutil;C:\Compile\ffmpeg\include;C:\Compile\ffmpeg;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src\QtAV;C:\Qt\5.9.9\msvc2017_64\include/QtGui;C:\Qt\5.9.9\msvc2017_64\include/QtWidgets;C:\Qt\5.9.9\msvc2017_64\include/QtQml;C:\Qt\5.9.9\msvc2017_64\include/QtNetwork;C:\Qt\5.9.9\msvc2017_64\include/QtCore;C:\Qt\5.9.9\msvc2017_64\include;./;../../../../qwt/src;C:\Programmation\QCTools\Project\QtCreator\qctools-gui\debug;;C:\Programmation\QCTools\Project\QtCreator\qctools-gui;C:\Qt\5.9.9\msvc2017_64\include/QtPrintSupport;C:\Programmation\QCTools\Project\QtCreator\qctools-qtav\src;../../../../zlib;../../../../Blackmagic DeckLink SDK\Win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -5,7 +5,7 @@
  */
 
 //---------------------------------------------------------------------------
-#include "Core/Preferences.h"
+#include "Core/PreferencesCore.h"
 #include <QMetaType>
 #include <QCoreApplication>
 #include <QDataStream>

@@ -78,5 +78,3 @@ macx:LIBS += -liconv \
              -framework OpenGL \
              -framework VideoDecodeAcceleration
 
-HEADERS += \
-    version.h

@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\CLI">
+      <UniqueIdentifier>{8dee063f-49b8-4c42-8dbb-cf2c18d574ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{9593db25-57f4-49d7-86f2-2e0c5ca8a6f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\_Automated">
+      <UniqueIdentifier>{20512780-47a0-407e-b507-6afbd0fd2ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty">
+      <UniqueIdentifier>{73eee9a0-4c77-40bd-bdc1-63e148927218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\qblowfish">
+      <UniqueIdentifier>{a5e4efea-ef88-4dbb-8c54-6f59b8079898}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\tinyxml2">
+      <UniqueIdentifier>{29746c5c-8f68-48f9-9b85-8489acdc2318}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Core\FileInformation.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\VideoStreamStats.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\VideoStats.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\StreamsStats.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\FormatStats.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\PreferencesCore.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\FFmpeg_Glue.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\CommonStreamStats.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\CommonStats.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\AudioStats.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\AudioStreamStats.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Core.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\SignalServer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\SignalServerConnectionChecker.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\VideoCore.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\AudioCore.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\FFmpegVideoEncoder.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\TimeCode.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\BlackmagicDeckLink_Glue.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\BlackmagicDeckLink.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Cli\cli.cpp">
+      <Filter>Source Files\CLI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Cli\main.cpp">
+      <Filter>Source Files\CLI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\QtCreator\qctools-lib\debug\moc_FFmpegVideoEncoder.cpp">
+      <Filter>Source Files\_Automated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\QtCreator\qctools-lib\debug\moc_FileInformation.cpp">
+      <Filter>Source Files\_Automated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\QtCreator\qctools-lib\debug\moc_SignalServer.cpp">
+      <Filter>Source Files\_Automated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\QtCreator\qctools-lib\debug\moc_SignalServerConnectionChecker.cpp">
+      <Filter>Source Files\_Automated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ThirdParty\qblowfish\qblowfish.cpp">
+      <Filter>Source Files\ThirdParty\qblowfish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ThirdParty\tinyxml2\tinyxml2.cpp">
+      <Filter>Source Files\ThirdParty\tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\QtCreator\qctools-cli\debug\moc_cli.cpp">
+      <Filter>Source Files\_Automated</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\QtCreator\qctools-lib\debug\moc_predefs.h">
+      <Filter>Source Files\_Automated</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

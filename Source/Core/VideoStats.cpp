@@ -23,7 +23,6 @@ extern "C"
 
 #include "tinyxml2.h"
 #include <sstream>
-#include <iomanip>
 #include <cstdlib>
 #include <cfloat>
 #include <QString>
@@ -474,8 +473,8 @@ string VideoStats::StatsToXML (const activefilters& filters)
     stringstream heightStream; heightStream<<height; // Note: we use the same value for all frame, we should later use the right value per frame
     for (size_t x_Pos=0; x_Pos<x_Current; ++x_Pos)
     {
-        stringstream pkt_pts_time; pkt_pts_time<<fixed<<setprecision(7)<<(x[1][x_Pos]+FirstTimeStamp);
-        stringstream pkt_duration_time; pkt_duration_time<<fixed<<setprecision(7)<<durations[x_Pos];
+        stringstream pkt_pts_time; pkt_pts_time<<fixed<<(x[1][x_Pos]+FirstTimeStamp);
+        stringstream pkt_duration_time; pkt_duration_time<<fixed<<durations[x_Pos];
         stringstream key_frame; key_frame<<key_frames[x_Pos]?'1':'0';
         Data<<"        <frame media_type=\"video\"";
         Data << " stream_index=\"" << streamIndex << "\"";

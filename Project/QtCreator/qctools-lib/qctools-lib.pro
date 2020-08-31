@@ -41,7 +41,7 @@ HEADERS = \
     $$SOURCES_PATH/Core/FileInformation.h \
     $$SOURCES_PATH/Core/SignalServerConnectionChecker.h \
     $$SOURCES_PATH/Core/SignalServer.h \
-    $$SOURCES_PATH/Core/Preferences.h \
+    $$SOURCES_PATH/Core/PreferencesCore.h \
     $$SOURCES_PATH/Core/FFmpegVideoEncoder.h
 
 
@@ -63,7 +63,7 @@ SOURCES = \
     $$SOURCES_PATH/Core/FileInformation.cpp \
     $$SOURCES_PATH/Core/SignalServerConnectionChecker.cpp \
     $$SOURCES_PATH/Core/SignalServer.cpp \
-    $$SOURCES_PATH/Core/Preferences.cpp \
+    $$SOURCES_PATH/Core/PreferencesCore.cpp \
     $$SOURCES_PATH/Core/FFmpegVideoEncoder.cpp
 
 include($$SOURCES_PATH/ThirdParty/qblowfish/qblowfish.pri)
