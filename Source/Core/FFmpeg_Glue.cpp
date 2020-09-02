@@ -464,8 +464,9 @@ bool FFmpeg_Glue::outputdata::FilterGraph_Init()
     stringstream    Args;
     const AVFilter*       Source;
     const AVFilter*       Sink;
-    if (Type==AVMEDIA_TYPE_VIDEO)
+    switch (Type)
     {
+    case AVMEDIA_TYPE_VIDEO:
         Source                                  = avfilter_get_by_name("buffer");
         Sink                                    = avfilter_get_by_name("buffersink");
         Args    << "video_size="                << Stream->codec->width
@@ -475,9 +476,8 @@ bool FFmpeg_Glue::outputdata::FilterGraph_Init()
                 << "/"                          << Stream->codec->time_base.den
                 <<":pixel_aspect="              << Stream->codec->sample_aspect_ratio.num
                 << "/"                          << Stream->codec->sample_aspect_ratio.den;
-    }
-    if (Type==AVMEDIA_TYPE_AUDIO)
-    {
+        break;
+    case AVMEDIA_TYPE_AUDIO:
         Source                                  = avfilter_get_by_name("abuffer");
         Sink                                    = avfilter_get_by_name(OutputMethod==Output_Stats?"abuffersink":"buffersink");
         Args    << "time_base="                 << Stream->codec->time_base.num
@@ -485,7 +485,8 @@ bool FFmpeg_Glue::outputdata::FilterGraph_Init()
                 <<":sample_rate="               << Stream->codec->sample_rate
                 <<":sample_fmt="                << av_get_sample_fmt_name(Stream->codec->sample_fmt)
                 <<":channel_layout=0x"          << std::hex << (Stream->codec->channel_layout ? Stream->codec->channel_layout : av_get_default_channel_layout(Stream->codec->channels));
-            ;
+        break;
+    default: return false;
     }
     if (avfilter_graph_create_filter(&FilterGraph_Source_Context, Source, "in", Args.str().c_str(), NULL, FilterGraph)<0)
     {

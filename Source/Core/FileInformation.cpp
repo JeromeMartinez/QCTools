@@ -23,6 +23,7 @@
 #include <QUrl>
 #include <QBuffer>
 #include <QPair>
+#include <QStandardPaths>
 #include <zlib.h>
 #include <zconf.h>
 
@@ -337,6 +338,29 @@ FileInformation::FileInformation (SignalServer* signalServer, const QString &Fil
         {
             attachment = FFmpeg_Glue::getAttachment(FileName + dotQctoolsDotMkv, StatsFromExternalData_FileName);
             glueFileName = glueFileName + dotQctoolsDotMkv.toStdString();
+        }
+        else
+        {
+            // Cache directory
+            auto CacheDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+            if (!CacheDir.empty() && !CacheDir[0].isEmpty())
+            {
+                QString FileNameCached(FileName);
+                FileNameCached.replace(":/", "/"); // "C:\x" Windows local style
+                FileNameCached.replace("//", "/"); // "\\x" Windows network style
+                FileNameCached.insert(0, CacheDir[0] + "/");
+
+                if (QFile::exists(FileNameCached + dotQctoolsDotMkv))
+                {
+                    attachment = FFmpeg_Glue::getAttachment(FileNameCached + dotQctoolsDotMkv, StatsFromExternalData_FileName);
+                    glueFileName = FileNameCached.toUtf8().data() + dotQctoolsDotMkv.toStdString();
+                }
+                else if(QFile::exists(FileNameCached + dotQctoolsDotXmlDotGz))
+                {
+                    StatsFromExternalData_FileName = FileNameCached + dotQctoolsDotXmlDotGz;
+                    StatsFromExternalData_FileName_IsCompressed = true;
+                }
+            }
         }
     }
 

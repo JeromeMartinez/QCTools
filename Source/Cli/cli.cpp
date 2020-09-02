@@ -2,6 +2,8 @@
 #include "version.h"
 #include "Core/FFmpegVideoEncoder.h"
 #include "Core/FFmpeg_Glue.h"
+#include <QStandardPaths>
+#include <QDir>
 
 Cli::Cli() : indexOfStreamWithKnownFrameCount(0), statsFileBytesWritten(0), statsFileBytesTotal(0), statsFileBytesUploaded(0), statsFileBytesToUpload(0)
 {
@@ -20,6 +22,8 @@ int Cli::exec(QCoreApplication &a)
     bool showLongHelp = false;
     bool showShortHelp = false;
     bool showVersion = false;
+    bool useCacheDir = false;
+    bool createThumbnails = false;
 
     bool uploadToSignalServer = false;
     bool forceUploadToSignalServer = false;
@@ -58,6 +62,14 @@ int Cli::exec(QCoreApplication &a)
         } else if(a.arguments().at(i) == "-v")
         {
             showVersion = true;
+        }
+        else if (a.arguments().at(i) == "-d")
+        {
+            useCacheDir = true;
+        }
+        else if (a.arguments().at(i) == "-t")
+        {
+            createThumbnails = true;
         }
     }
 
@@ -190,10 +202,37 @@ int Cli::exec(QCoreApplication &a)
     if(input.isEmpty())
         return NoInput;
 
-    if(!input.endsWith(".qctools.xml.gz")) // skip output if input is already .qctools.xml.gz
+    if(!input.endsWith(".qctools.xml.gz") && !input.endsWith(".qctools.mkv")) // skip output if input is already .qctools.xml.gz
     {
+        if (useCacheDir)
+        {
+            if (!output.isEmpty())
+            {
+                std::cout << "-cd and -o can not be used at same time, analyzing aborted.. " << std::endl;
+                return InvalidInput;
+            }
+
+            auto CacheDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+            if (CacheDir.empty() || CacheDir[0].isEmpty())
+            {
+                std::cout << "Documents path location not available, analyzing aborted.. " << std::endl;
+                return InvalidInput;
+            }
+
+            auto filePath = QFileInfo(input).filePath();
+            filePath.replace(":/", "/"); // "C:\x" Windows local style
+            filePath.replace("//", "/"); // "\\x" Windows network style
+            output = CacheDir[0] + '/' + filePath + (createThumbnails ? ".qctools.mkv" : ".qctools.xml.gz");
+            auto outPath = QFileInfo(output).dir();
+            if (!outPath.mkpath("."))
+            {
+                std::cout << "Can not create output directory, analyzing aborted.. " << std::endl;
+                return InvalidInput;
+            }
+        }
+
         if(output.isEmpty())
-            output = input + ".qctools.xml.gz";
+            output = input + (createThumbnails ? ".qctools.mkv" : ".qctools.xml.gz");
     }
 
     bool mkvReport = output.endsWith(".qctools.mkv");
