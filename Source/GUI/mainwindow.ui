@@ -150,6 +150,7 @@
     <addaction name="actionExport_XmlGz_Sidecar"/>
     <addaction name="actionExport_XmlGz_SidecarAll"/>
     <addaction name="actionExport_XmlGz_Custom"/>
+    <addaction name="actionExport_Mkv_Cache"/>
     <addaction name="separator"/>
     <addaction name="actionSignalServer_status"/>
     <addaction name="actionUploadToSignalServer"/>
@@ -404,6 +405,11 @@
   <action name="actionExport_XmlGz_SidecarAll">
    <property name="text">
     <string>To sidecar .qctools.xml.gz (All files)</string>
+   </property>
+  </action>
+  <action name="actionExport_Mkv_Cache">
+   <property name="text">
+    <string>To cache directory</string>
    </property>
   </action>
   <action name="actionZoomOne">

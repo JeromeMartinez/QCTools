@@ -319,6 +319,17 @@ void MainWindow::on_actionExport_Mkv_Prompt_triggered()
     statusBar()->showMessage("Exported to "+FileName);
 }
 
+void MainWindow::on_actionExport_Mkv_Cache_triggered()
+{
+    if (getFilesCurrentPos() >= Files.size() || !Files[getFilesCurrentPos()])
+        return;
+
+    QString FileName = preferences->createCacheDirectoryFileNameString(Files[getFilesCurrentPos()]->fileName()) + ".qctools.mkv";
+
+    Files[getFilesCurrentPos()]->Export_QCTools_Mkv(FileName, Prefs->ActiveFilters);
+    statusBar()->showMessage("Exported to " + FileName);
+}
+
 //---------------------------------------------------------------------------
 void MainWindow::on_actionExport_XmlGz_Sidecar_triggered()
 {
@@ -417,6 +428,8 @@ void MainWindow::on_actionGraphsLayout_triggered()
     //    ui->actionExport_XmlGz_Custom->setVisible(true);
     if (ui->actionExport_XmlGz_Prompt)
         ui->actionExport_XmlGz_Prompt->setVisible(true);
+    if (ui->actionExport_Mkv_Cache)
+        ui->actionExport_Mkv_Cache->setVisible(true);
     //if (ui->actionPrint)
     //    ui->actionPrint->setVisible(true);
     if (ui->actionZoomIn)
@@ -686,6 +699,8 @@ void MainWindow::updateSignalServerSettings()
     uploadAction()->setVisible(Prefs->isSignalServerEnabled());
     uploadAllAction()->setVisible(Prefs->isSignalServerEnabled());
     ui->actionSignalServer_status->setVisible(Prefs->isSignalServerEnabled());
+
+    ui->actionExport_Mkv_Cache->setEnabled(!preferences->cacheDirectoryPathString().isEmpty());
 }
 
 template <typename T> QString convertEnumToQString(const char* typeName, int value)

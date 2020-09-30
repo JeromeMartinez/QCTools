@@ -34,6 +34,9 @@ public:
     bool isSignalServerEnabled() const;
     bool isSignalServerAutoUploadEnabled() const;
 
+    QString cacheDirectoryPathString() const;
+    QString defaultCacheDirectoryPathString() const;
+
     QString signalServerUrlString() const;
     QString signalServerLogin() const;
     QString signalServerPassword() const;
@@ -55,6 +58,9 @@ private Q_SLOTS:
     void OnAccepted();
     void OnRejected();
     void on_signalServerUrl_lineEdit_editingFinished();
+    void on_CacheDir_None_toggled(bool checked);
+    void on_CacheDir_Default_toggled(bool checked);
+    void on_CacheDir_Custom_toggled(bool checked);
 };
 
 #endif // PREFERENCES_DIALOG_H
