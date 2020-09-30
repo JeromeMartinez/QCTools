@@ -2,6 +2,7 @@
 #include "version.h"
 #include "Core/FFmpegVideoEncoder.h"
 #include "Core/FFmpeg_Glue.h"
+#include "QDir"
 
 Cli::Cli() : indexOfStreamWithKnownFrameCount(0), statsFileBytesWritten(0), statsFileBytesTotal(0), statsFileBytesUploaded(0), statsFileBytesToUpload(0)
 {
@@ -11,7 +12,8 @@ Cli::Cli() : indexOfStreamWithKnownFrameCount(0), statsFileBytesWritten(0), stat
 int Cli::exec(QCoreApplication &a)
 {
     std::string appName = "qcli";
-    std::string copyright = "Copyright (C): 2013-2017, BAVC.\nCopyright (C): 2018-2020, RiceCapades LLC & MediaArea.net SARL.";
+    std::string copyright = "Copyright (C): 2013-2020, BAVC.\nCopyright (C): 2018-2020, RiceCapades LLC & MediaArea.net SARL.";
+    Preferences prefs;
 
     QString input;
     QString output;
@@ -20,13 +22,18 @@ int Cli::exec(QCoreApplication &a)
     bool showLongHelp = false;
     bool showShortHelp = false;
     bool showVersion = false;
+    bool createMkv = true;
+    QString useCacheDir;
+    bool ignoreCacheDir = false;
+    bool configIsSet = false;
+    bool configHasIssues = false;
 
     bool uploadToSignalServer = false;
     bool forceUploadToSignalServer = false;
 
     QString checkUploadFileName;
 
-    for(int i = 0; i < a.arguments().length(); ++i)
+    for(int i = 1; i < a.arguments().length(); ++i)
     {
         if(a.arguments().at(i) == "-i" && (i + 1) < a.arguments().length())
         {
@@ -58,8 +65,199 @@ int Cli::exec(QCoreApplication &a)
         } else if(a.arguments().at(i) == "-v")
         {
             showVersion = true;
+        } else if (a.arguments().at(i) == "-set-cd")
+        {
+            ++i;
+            if (i >= a.arguments().length() || a.arguments().at(i).isEmpty())
+            {
+                std::cout << "Missing argument after last option." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            configIsSet = true;
+
+            prefs.setCacheDirectoryPathString(a.arguments().at(i));
+            useCacheDir = prefs.cacheDirectoryPathString();
+            if (useCacheDir.isEmpty())
+            {
+                std::cout << "Cache directory location can not be saved." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            std::cout << "Cache directory set to " << useCacheDir.toStdString() << std::endl;
+        } else if (a.arguments().at(i) == "-clear-cd")
+        {
+            configIsSet = true;
+
+            prefs.setCacheDirectoryPathString(QString());
+            useCacheDir = prefs.cacheDirectoryPathString();
+            if (!useCacheDir.isEmpty())
+            {
+                std::cout << "Cache directory location can not be saved." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            std::cout << "Cache directory cleared." << std::endl;
+        }
+        else if (a.arguments().at(i) == "-show-cd")
+        {
+            configIsSet = true;
+            bool HasError;
+            auto cacheDirectoryPathString = prefs.cacheDirectoryPathString(&HasError);
+            if (HasError)
+            {
+                std::cout << "Default cache directory location not available, use -cdp instead, analyzing aborted." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            if (cacheDirectoryPathString.isEmpty())
+                std::cout << "Cache directory path is not set." << std::endl;
+            else
+                std::cout << "Cache directory path is " << cacheDirectoryPathString.toStdString() << '.' << std::endl;
+        } else if(a.arguments().at(i) == "-cdp")
+        {
+            ++i;
+            if (i >= a.arguments().length())
+            {
+                std::cout << "Missing argument after last option." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+
+            useCacheDir = a.arguments().at(i);
+        } else if (a.arguments().at(i) == "-s")
+        {
+            createMkv = false;
+        } else if (a.arguments().at(i) == "-a")
+        {
+            createMkv = true;
+        } else if (a.arguments().at(i) == "-show-panels")
+        {
+            configIsSet = true;
+            cout << "List of available panels:" << endl;
+            auto availablePanels = prefs.availablePanels();
+            auto activePanels = prefs.activePanels();
+            for (auto availablePanel = availablePanels.constBegin(); availablePanel != availablePanels.constEnd(); ++availablePanel)
+            {
+                std::cout << availablePanel - availablePanels.constBegin() + 1 << " | " << (activePanels.find(availablePanel->name) != activePanels.end() ? "Active | " : "       | ") << availablePanel->name.toStdString() << std::endl;
+            }
+        } else if (a.arguments().at(i) == "-activate-panel")
+        {
+            ++i;
+            if (i >= a.arguments().length())
+            {
+                std::cout << "Missing argument after last option." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            configIsSet = true;
+
+            // Get panel name
+            auto index = a.arguments().at(i).toInt();
+            QString panelName;
+            auto availablePanels = prefs.availablePanels();
+            if (a.arguments().at(i).toLower() == "all")
+            {
+                // add panel name to list
+                QSet<QString> activePanels;
+                for (auto availablePanel = availablePanels.constBegin(); availablePanel != availablePanels.constEnd(); ++availablePanel)
+                    activePanels.insert(availablePanel->name);
+                prefs.setActivePanels(activePanels);
+                std::cout << "All panels activated." << std::endl;
+            }
+            else
+            {
+                for (auto availablePanel = availablePanels.constBegin(); availablePanel != availablePanels.constEnd(); ++availablePanel)
+                {
+                    if (index == availablePanel - availablePanels.constBegin() + 1 || a.arguments().at(i + 1) == availablePanel->name)
+                    {
+                        panelName = availablePanel->name;
+                        break;
+                    }
+                }
+                if (panelName.isEmpty())
+                {
+                    std::cout << "Invalid panel name or index." << std::endl;
+                    configHasIssues = true;
+                    continue;
+                }
+
+                // add panel name to list
+                auto activePanels = prefs.activePanels();
+                auto panelNameInActivePanels = activePanels.insert(panelName);
+                prefs.setActivePanels(activePanels);
+                std::cout << "Panel " << panelName.toStdString() << " activated." << std::endl;
+            }
+        } else if (a.arguments().at(i) == "-deactivate-panel")
+        {
+            ++i;
+            if (i >= a.arguments().length())
+            {
+                std::cout << "Missing argument after last option." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            configIsSet = true;
+
+            if (a.arguments().at(i).toLower() == "all")
+            {
+                // add panel name to list
+                QSet<QString> activePanels;
+                prefs.setActivePanels(activePanels);
+                std::cout << "All panels deactivated." << std::endl;
+            }
+            else
+            {
+                // Get panel name
+                auto index = a.arguments().at(i + 1).toInt();
+                QString panelName;
+                auto availablePanels = prefs.availablePanels();
+                for (auto availablePanel = availablePanels.constBegin(); availablePanel != availablePanels.constEnd(); ++availablePanel)
+                {
+                    if (index == availablePanel - availablePanels.constBegin() + 1 || a.arguments().at(i + 1) == availablePanel->name)
+                    {
+                        panelName = availablePanel->name;
+                        break;
+                    }
+                }
+                if (panelName.isEmpty())
+                {
+                    std::cout << "Invalid panel name or index." << std::endl;
+                    configHasIssues = true;
+                    continue;
+                }
+
+                // remove panel name from list
+                auto activePanels = prefs.activePanels();
+                auto panelNameInActivePanels = activePanels.find(panelName);
+                if (panelNameInActivePanels != activePanels.end())
+                {
+                    activePanels.remove(*panelNameInActivePanels);
+                    prefs.setActivePanels(activePanels);
+                }
+                std::cout << "Panel " << panelName.toStdString() << " deactivated." << std::endl;
+            }
+        } else
+        {
+            std::cout << "Invalid argument " << a.arguments().at(i).toStdString() << std::endl;
+            configHasIssues = true;
         }
     }
+
+    // Cache dir
+    if (!ignoreCacheDir && useCacheDir.isEmpty())
+    {
+        bool HasError;
+        useCacheDir = prefs.cacheDirectoryPathString(&HasError);
+        if (HasError)
+        {
+            std::cout << "App local data location not available, use -cdp instead, analyzing aborted.. " << std::endl;
+            configHasIssues = true;
+        }
+    }
+
+    if (configHasIssues)
+        return InvalidInput;
 
     if(!showLongHelp)
     {
@@ -78,6 +276,9 @@ int Cli::exec(QCoreApplication &a)
 
     if(showLongHelp || showShortHelp)
     {
+        if (configIsSet)
+            return Success;
+
         if(showShortHelp)
         {
             std::cout <<
@@ -96,7 +297,32 @@ int Cli::exec(QCoreApplication &a)
                 << "-o <output file>" << std::endl
                 << "    Specifies output file path, including extension. If no output file is" << std::endl
                 << "    declared, qctools will create an output named after the input file, suffixed" << std::endl
-                << "    with \".qctools.xml.gz\"." << std::endl
+                << "    with \".qctools.xml.gz\" (if -s used) or  \".qctools.mkv\" (if -a used)." << std::endl
+                << "-s" << std::endl
+                << "    Stats only (no thumbnails, no panels)." << std::endl
+                << "-a" << std::endl
+                << "    All (stats + thumbnails + panels)." << std::endl
+                << "    Is default." << std::endl
+                << "-clear-cd" << std::endl
+                << "    Clear the cache directory location. Default directory becomes the input directory." << std::endl
+                << "-set-cd <cache directory path>" << std::endl
+                << "    Register the indicated path as the cache directory location." << std::endl
+                << "    Use \"-set-cd default\" for using the standard cache directory location." << std::endl
+                << "-show-cd" << std::endl
+                << "    Show the registered cache directory location." << std::endl
+                << "-cdp <cache directory path>" << std::endl
+                << "    Force cache directory location to the indicated path." << std::endl
+                << "-show-panels" << std::endl
+                << "    Show the available panels." << std::endl
+                << "    First column is an index to be used with -activate-panel or -deactivate-panel." << std::endl
+                << "    Second column is the status of the panel (\"active\" if the panel is used during analysis)." << std::endl
+                << "    Third column is the name of the panel" << std::endl
+                << "-activate-panel <panel name or index>" << std::endl
+                << "    Register the panel as active." << std::endl
+                << "    Use \"all\" panel name for registering all panels as active." << std::endl
+                << "-deactivate-panel <panel name or index>" << std::endl
+                << "    Register the panel as not active." << std::endl
+                << "    Use \"all\" panel name for registering all panels as not active." << std::endl
                 << "-f" << std::endl
                 << "    Specifies '+'-separated string of filters used. Example: -f signalstats+cropdetect" << std::endl
                 << "    The filters used in " << appName << " may also be declared via the qctools-gui (see the" << std::endl
@@ -153,8 +379,6 @@ int Cli::exec(QCoreApplication &a)
 
     std::cout << appName << " " << (VERSION) << std::endl;
 
-    Preferences prefs;
-
     signalServer = std::unique_ptr<SignalServer>(new SignalServer());
 
     QString urlString = prefs.signalServerUrlString();
@@ -190,10 +414,34 @@ int Cli::exec(QCoreApplication &a)
     if(input.isEmpty())
         return NoInput;
 
-    if(!input.endsWith(".qctools.xml.gz")) // skip output if input is already .qctools.xml.gz
+    if(!input.endsWith(".qctools.xml.gz") && !input.endsWith(".qctools.mkv")) // skip output if input is already .qctools.xml.gz
     {
+        if (!useCacheDir.isEmpty())
+        {
+            if (!output.isEmpty())
+            {
+                std::cout << "-cd and -o can not be used at same time, analyzing aborted." << std::endl;
+                return InvalidInput;
+            }
+
+            auto fileNameCached = prefs.createCacheDirectoryFileNameString(input, useCacheDir);
+            if (fileNameCached.isEmpty())
+            {
+                std::cout << "Problem while creating output file name, analyzing aborted." << std::endl;
+                return InvalidInput;
+            }
+
+            output = fileNameCached + (createMkv ? ".qctools.mkv" : ".qctools.xml.gz");
+            auto outPath = QFileInfo(output).dir();
+            if (!outPath.mkpath("."))
+            {
+                std::cout << "Can not create output directory, analyzing aborted." << std::endl;
+                return InvalidInput;
+            }
+        }
+
         if(output.isEmpty())
-            output = input + ".qctools.xml.gz";
+            output = input + (createMkv ? ".qctools.mkv" : ".qctools.xml.gz");
     }
 
     bool mkvReport = output.endsWith(".qctools.mkv");
@@ -274,7 +522,7 @@ int Cli::exec(QCoreApplication &a)
 
     std::cout << std::endl;
 
-    info = std::unique_ptr<FileInformation>(new FileInformation(signalServer.get(), input, filters, prefs.activeAllTracks(), prefs.getActivePanels()));
+    info = std::unique_ptr<FileInformation>(new FileInformation(signalServer.get(), input, filters, prefs.activeAllTracks(), prefs.getActivePanels(), prefs.createCacheDirectoryFileNameString(input)));
     info->setAutoCheckFileUploaded(false);
     info->setAutoUpload(false);
 
@@ -462,7 +710,7 @@ int Cli::exec(QCoreApplication &a)
 
         QObject::disconnect(info.get(), SIGNAL(statsFileGenerationProgress(quint64, quint64)), this, SLOT(onStatsFileGenerationProgress(quint64, quint64)));
 
-        std::cout << std::endl << "generating QCTools report... done" << std::endl;
+        std::cout << std::endl << "generating QCTools report... done, " << output.toStdString() << std::endl;
     }
     else
     {

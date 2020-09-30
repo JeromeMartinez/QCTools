@@ -236,6 +236,8 @@ private Q_SLOTS:
 
     void on_actionExport_Mkv_Prompt_triggered();
 
+    void on_actionExport_Mkv_Cache_triggered();
+
     void on_actionGrab_frame_triggered();
 
     void on_actionGrab_plots_image_triggered();

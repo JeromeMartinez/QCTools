@@ -45,6 +45,16 @@ PreferencesDialog::~PreferencesDialog()
     delete ui;
 }
 
+QString PreferencesDialog::cacheDirectoryPathString() const
+{
+    return preferences->cacheDirectoryPathString();
+}
+
+QString PreferencesDialog::defaultCacheDirectoryPathString() const
+{
+    return preferences->defaultCacheDirectoryPathString();
+}
+
 bool PreferencesDialog::isSignalServerEnabled() const
 {
     return preferences->isSignalServerEnabled();
@@ -116,6 +126,13 @@ void PreferencesDialog::Load()
     ui->Tracks_Audio_First->setChecked(!ActiveAllTracks[Type_Audio]);
     ui->Tracks_Audio_All->setChecked(ActiveAllTracks[Type_Audio]);
 
+    if (cacheDirectoryPathString().isEmpty())
+        ui->CacheDir_None->setChecked(true);
+    else if (cacheDirectoryPathString()==defaultCacheDirectoryPathString())
+        ui->CacheDir_Default->setChecked(true);
+    else
+        ui->CacheDir_Custom->setChecked(true);
+
     ui->signalServerUrl_lineEdit->setText(signalServerUrlString());
     ui->signalServerLogin_lineEdit->setText(signalServerLogin());
     ui->signalServerPassword_lineEdit->setText(signalServerPassword());
@@ -135,6 +152,9 @@ void PreferencesDialog::Save()
     for (auto it = activePanelsNames.begin(); it != activePanelsNames.end(); ++it)
         A.insert(*it);
     preferences->setActivePanels(A);
+
+    preferences->setCacheDirectoryPathString(ui->cacheDirectoryPath_lineEdit->text());
+
     preferences->setSignalServerUrlString(ui->signalServerUrl_lineEdit->text());
     preferences->setSignalServerLogin(ui->signalServerLogin_lineEdit->text());
     preferences->setSignalServerPassword(ui->signalServerPassword_lineEdit->text());
@@ -258,5 +278,32 @@ void PreferencesDialog::on_signalServerUrl_lineEdit_editingFinished()
 
         ui->signalServerUrl_lineEdit->setText(url);
         ui->signalServerUrl_lineEdit->blockSignals(false);
+    }
+}
+
+void PreferencesDialog::on_CacheDir_None_toggled(bool checked)
+{
+    if (checked)
+    {
+        ui->cacheDirectoryPath_lineEdit->setText(QString());
+        ui->cacheDirectoryPath_lineEdit->setEnabled(false);
+    }
+}
+
+void PreferencesDialog::on_CacheDir_Default_toggled(bool checked)
+{
+    if (checked)
+    {
+        ui->cacheDirectoryPath_lineEdit->setText(defaultCacheDirectoryPathString());
+        ui->cacheDirectoryPath_lineEdit->setEnabled(false);
+    }
+}
+
+void PreferencesDialog::on_CacheDir_Custom_toggled(bool checked)
+{
+    if (checked)
+    {
+        ui->cacheDirectoryPath_lineEdit->setEnabled(true);
+        ui->cacheDirectoryPath_lineEdit->setText(cacheDirectoryPathString());
     }
 }
