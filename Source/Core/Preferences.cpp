@@ -15,12 +15,16 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QStandardPaths>
+#include <QFileInfo>
 
 #include "qblowfish.h"
 
 // Random key generated at http://www.random.org/bytes/
 #define KEY_HEX "911dae7a4ce9a24300efe3b8a4534301"
 QByteArray BlowfishKey = QByteArray::fromHex(KEY_HEX);
+
+QString CacheDirectoryPathUrl = "CacheDirectoryPath";
 
 QString KeySignalServerUrl = "SignalServerUrl";
 QString KeySignalServerEnable = "SignalServerEnable";
@@ -224,6 +228,69 @@ void Preferences::setSignalServerAutoUploadEnabled(bool enabled)
 {
     QSettings settings;
     settings.setValue(KeySignalServerEnableAutoUpload, enabled);
+}
+
+QString Preferences::cacheDirectoryPathString(bool* IssueWithDefaultCacheDirectoryPath) const
+{
+    QSettings settings;
+    auto Value = settings.value(CacheDirectoryPathUrl).toString();
+
+    if (Value == "default")
+    {
+        Value = defaultCacheDirectoryPathString();
+        if (IssueWithDefaultCacheDirectoryPath)
+            *IssueWithDefaultCacheDirectoryPath = Value.isEmpty();
+        return Value;
+    }
+
+    if (IssueWithDefaultCacheDirectoryPath)
+        *IssueWithDefaultCacheDirectoryPath = false;
+    return Value;
+}
+
+QString Preferences::defaultCacheDirectoryPathString() const
+{
+    auto cacheDirs = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation);
+    if (cacheDirs.empty() || cacheDirs[0].isEmpty())
+        return QString();
+    return cacheDirs[0] + "/cache";
+}
+
+QString Preferences::createCacheFileNameString(const QString & input, const QString & cacheDir) const
+{
+    // Transform a:/b/c in c.b.a
+    auto filePath = QFileInfo(input).absoluteFilePath();
+    if (filePath.isEmpty())
+        return QString();
+        
+    QString fileNameCached;
+    for (auto filePathPos = filePath.size() - 1; filePathPos; filePathPos--)
+    {
+        auto Character = filePath.at(filePathPos);
+        if (Character == '/')
+        {
+            fileNameCached += filePath.mid(filePathPos + 1);
+            fileNameCached += '.';
+        }
+        if (Character == '/' || Character == ':')
+        {
+            filePath.resize(filePathPos);
+        }
+    }
+    if (!filePath.isEmpty() && filePath[0] == '/')
+        filePath.remove(0, 1);
+    fileNameCached += filePath;
+
+    return (cacheDir.isEmpty() ? QFileInfo(cacheDirectoryPathString()).absoluteFilePath() : cacheDir) + "/" + fileNameCached;
+}
+
+void Preferences::setCacheDirectoryPathString(const QString &urlString)
+{
+    QSettings settings;
+    if (urlString.isEmpty())
+        settings.remove(CacheDirectoryPathUrl);
+    else
+        settings.setValue(CacheDirectoryPathUrl, urlString);
 }
 
 QString Preferences::signalServerUrlString() const

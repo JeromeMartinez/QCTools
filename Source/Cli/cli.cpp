@@ -2,6 +2,7 @@
 #include "version.h"
 #include "Core/FFmpegVideoEncoder.h"
 #include "Core/FFmpeg_Glue.h"
+#include <QDir>
 
 Cli::Cli() : indexOfStreamWithKnownFrameCount(0), statsFileBytesWritten(0), statsFileBytesTotal(0), statsFileBytesUploaded(0), statsFileBytesToUpload(0)
 {
@@ -12,6 +13,7 @@ int Cli::exec(QCoreApplication &a)
 {
     std::string appName = "qcli";
     std::string copyright = "Copyright (C): 2013-2020, BAVC.\nCopyright (C): 2018-2020, RiceCapades LLC & MediaArea.net SARL.";
+    Preferences prefs;
 
     QString input;
     QString output;
@@ -21,6 +23,10 @@ int Cli::exec(QCoreApplication &a)
     bool showShortHelp = false;
     bool showVersion = false;
     bool createMkv = true;
+    QString useCacheDir;
+    bool ignoreCacheDir = false;
+    bool configIsSet = false;
+    bool configHasIssues = false;
 
     bool uploadToSignalServer = false;
     bool forceUploadToSignalServer = false;
@@ -59,6 +65,76 @@ int Cli::exec(QCoreApplication &a)
         } else if(a.arguments().at(i) == "-v")
         {
             showVersion = true;
+        }
+        else if (a.arguments().at(i) == "-cd")
+        {
+            ++i;
+            if (i >= a.arguments().length())
+            {
+                std::cout << "Missing argument after last option." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+
+            useCacheDir = a.arguments().at(i);
+            if (useCacheDir == "default")
+            {
+                useCacheDir = prefs.defaultCacheDirectoryPathString();
+                if (useCacheDir.isEmpty())
+                {
+                    std::cout << "Cache directory location can not be found." << std::endl;
+                    configHasIssues = true;
+                    continue;
+                }
+            }
+        } else if (a.arguments().at(i) == "-clear-cd")
+        {
+            configIsSet = true;
+
+            prefs.setCacheDirectoryPathString(QString());
+            useCacheDir = prefs.cacheDirectoryPathString();
+            if (!useCacheDir.isEmpty())
+            {
+                std::cout << "Cache directory location can not be saved." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            std::cout << "Cache directory cleared." << std::endl;
+        } else if (a.arguments().at(i) == "-set-cd")
+        {
+            ++i;
+            if (i >= a.arguments().length() || a.arguments().at(i).isEmpty())
+            {
+                std::cout << "Missing argument after last option." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            configIsSet = true;
+
+            prefs.setCacheDirectoryPathString(a.arguments().at(i));
+            useCacheDir = prefs.cacheDirectoryPathString();
+            if (useCacheDir.isEmpty())
+            {
+                std::cout << "Cache directory location can not be saved." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            std::cout << "Cache directory set to " << useCacheDir.toStdString() << std::endl;
+        } else if (a.arguments().at(i) == "-show-cd")
+        {
+            configIsSet = true;
+            bool HasError;
+            auto cacheDirectoryPathString = prefs.cacheDirectoryPathString(&HasError);
+            if (HasError)
+            {
+                std::cout << "Default cache directory location not available, use -cd instead, analyzing aborted." << std::endl;
+                configHasIssues = true;
+                continue;
+            }
+            if (cacheDirectoryPathString.isEmpty())
+                std::cout << "Cache directory path is not set." << std::endl;
+            else
+                std::cout << "Cache directory path is " << cacheDirectoryPathString.toStdString() << '.' << std::endl;
         } else if (a.arguments().at(i) == "-s")
         {
             createMkv = false;
@@ -67,6 +143,21 @@ int Cli::exec(QCoreApplication &a)
             createMkv = true;
         }
     }
+
+    // Cache dir
+    if (!ignoreCacheDir && useCacheDir.isEmpty())
+    {
+        bool HasError;
+        useCacheDir = prefs.cacheDirectoryPathString(&HasError);
+        if (HasError)
+        {
+            std::cout << "App local data location not available, use -cd instead, analyzing aborted.. " << std::endl;
+            configHasIssues = true;
+        }
+    }
+
+    if (configHasIssues)
+        return InvalidInput;
 
     if(!showLongHelp)
     {
@@ -85,6 +176,9 @@ int Cli::exec(QCoreApplication &a)
 
     if(showLongHelp || showShortHelp)
     {
+        if (configIsSet)
+            return Success;
+
         if(showShortHelp)
         {
             std::cout <<
@@ -109,6 +203,16 @@ int Cli::exec(QCoreApplication &a)
                 << "-a" << std::endl
                 << "    All (stats + thumbnails + panels)." << std::endl
                 << "    Is default." << std::endl
+                << "-cd <cache directory path>" << std::endl
+                << "    Use the indicated path as the cache directory location." << std::endl
+                << "    Use \"-cd default\" for using the standard cache directory location." << std::endl
+                << "-set-cd <cache directory path>" << std::endl
+                << "    Register the indicated path as the cache directory location." << std::endl
+                << "    Use \"-set-cd default\" for using the standard cache directory location." << std::endl
+                << "-show-cd" << std::endl
+                << "    Show the registered cache directory location." << std::endl
+                << "-clear-cd" << std::endl
+                << "    Clear the cache directory location. Default directory becomes the input directory." << std::endl
                 << "-f" << std::endl
                 << "    Specifies '+'-separated string of filters used. Example: -f signalstats+cropdetect" << std::endl
                 << "    The filters used in " << appName << " may also be declared via the qctools-gui (see the" << std::endl
@@ -165,8 +269,6 @@ int Cli::exec(QCoreApplication &a)
 
     std::cout << appName << " " << (VERSION) << std::endl;
 
-    Preferences prefs;
-
     signalServer = std::unique_ptr<SignalServer>(new SignalServer());
 
     QString urlString = prefs.signalServerUrlString();
@@ -204,6 +306,30 @@ int Cli::exec(QCoreApplication &a)
 
     if(!input.endsWith(".qctools.xml.gz") && !input.endsWith(".qctools.mkv")) // skip output if input is already .qctools.xml.gz
     {
+        if (!useCacheDir.isEmpty())
+        {
+            if (!output.isEmpty())
+            {
+                std::cout << "-cd and -o can not be used at same time, analyzing aborted." << std::endl;
+                return InvalidInput;
+            }
+
+            auto fileNameCached = prefs.createCacheFileNameString(input, useCacheDir);
+            if (fileNameCached.isEmpty())
+            {
+                std::cout << "Problem while creating output file name, analyzing aborted." << std::endl;
+                return InvalidInput;
+            }
+
+            output = fileNameCached + (createMkv ? ".qctools.mkv" : ".qctools.xml.gz");
+            auto outPath = QFileInfo(output).dir();
+            if (!outPath.mkpath("."))
+            {
+                std::cout << "Can not create output directory, analyzing aborted." << std::endl;
+                return InvalidInput;
+            }
+        }
+
         if(output.isEmpty())
             output = input + (createMkv ? ".qctools.mkv" : ".qctools.xml.gz");
     }
@@ -286,7 +412,7 @@ int Cli::exec(QCoreApplication &a)
 
     std::cout << std::endl;
 
-    info = std::unique_ptr<FileInformation>(new FileInformation(signalServer.get(), input, filters, prefs.activeAllTracks(), prefs.getActivePanels()));
+    info = std::unique_ptr<FileInformation>(new FileInformation(signalServer.get(), input, filters, prefs.activeAllTracks(), prefs.getActivePanels(), prefs.createCacheFileNameString(input)));
     info->setAutoCheckFileUploaded(false);
     info->setAutoUpload(false);
 

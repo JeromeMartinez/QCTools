@@ -319,6 +319,34 @@ void MainWindow::on_actionExport_Mkv_SidecarAll_triggered()
 }
 
 //---------------------------------------------------------------------------
+void MainWindow::on_actionExport_Mkv_Cache_triggered()
+{
+    if (getFilesCurrentPos() >= Files.size() || !Files[getFilesCurrentPos()])
+        return;
+
+    QString FileName = preferences->createCacheFileNameString(Files[getFilesCurrentPos()]->fileName()) + ".qctools.mkv";
+
+    Files[getFilesCurrentPos()]->Export_QCTools_Mkv(FileName, Prefs->ActiveFilters);
+    statusBar()->showMessage("Exported to " + FileName);
+}
+
+//---------------------------------------------------------------------------
+void MainWindow::on_actionExport_Mkv_CacheAll_triggered()
+{
+    for (size_t Pos = 0; Pos < Files.size(); ++Pos)
+    {
+        auto file = Files[Pos];
+        bool parsed = file->parsed();
+        if (!parsed)
+            continue; // Does not export if not fully parsed
+
+        QString FileName = preferences->createCacheFileNameString(Files[Pos]->fileName()) + ".qctools.mkv";
+
+        file->Export_QCTools_Mkv(FileName, Prefs->ActiveFilters);
+    }
+}
+
+//---------------------------------------------------------------------------
 void MainWindow::on_actionPrint_triggered()
 {
     Export_PDF();
@@ -339,6 +367,8 @@ void MainWindow::on_actionFilesList_triggered()
         ui->actionExport_Mkv_Prompt->setVisible(false);
     if (ui->actionExport_Mkv_Sidecar)
         ui->actionExport_Mkv_Sidecar->setVisible(false);
+    if (ui->actionExport_Mkv_Cache)
+        ui->actionExport_Mkv_Cache->setVisible(false);
     if (ui->actionPrint)
         ui->actionPrint->setVisible(false);
     if (ui->actionZoomIn)
@@ -637,6 +667,11 @@ void MainWindow::updateSignalServerSettings()
     uploadAction()->setVisible(Prefs->isSignalServerEnabled());
     uploadAllAction()->setVisible(Prefs->isSignalServerEnabled());
     ui->actionSignalServer_status->setVisible(Prefs->isSignalServerEnabled());
+
+    // Update visibility of export to cache directory
+    bool cacheDirectoryPathStringIsFilled = !Prefs->cacheDirectoryPathString().isEmpty();
+    ui->actionExport_Mkv_Cache->setVisible(cacheDirectoryPathStringIsFilled);
+    ui->actionExport_Mkv_CacheAll->setVisible(cacheDirectoryPathStringIsFilled);
 }
 
 template <typename T> QString convertEnumToQString(const char* typeName, int value)
@@ -762,6 +797,7 @@ void MainWindow::updateExportActions()
     ui->actionExport_XmlGz_Sidecar->setEnabled(exportEnabled);
     ui->actionExport_Mkv_Prompt->setEnabled(exportEnabled);
     ui->actionExport_Mkv_Sidecar->setEnabled(exportEnabled);
+    ui->actionExport_Mkv_Cache->setEnabled(exportEnabled);
 
     ui->menuLegacy_outputs->setEnabled(ui->actionExport_XmlGz_Prompt->isEnabled() || ui->actionExport_XmlGz_Sidecar->isEnabled() || ui->actionExport_XmlGz_SidecarAll->isEnabled());
 }
@@ -779,6 +815,7 @@ void MainWindow::updateExportAllAction()
 
     ui->actionExport_XmlGz_SidecarAll->setEnabled(allParsedOrHaveStats);
     ui->actionExport_Mkv_SidecarAll->setEnabled(allParsedOrHaveStats);
+    ui->actionExport_Mkv_CacheAll->setEnabled(allParsedOrHaveStats);
 
     ui->menuLegacy_outputs->setEnabled(ui->actionExport_XmlGz_Prompt->isEnabled() || ui->actionExport_XmlGz_Sidecar->isEnabled() || ui->actionExport_XmlGz_SidecarAll->isEnabled());
 }

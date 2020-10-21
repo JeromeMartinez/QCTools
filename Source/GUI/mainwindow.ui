@@ -201,6 +201,8 @@
     <addaction name="actionExport_Mkv_Prompt"/>
     <addaction name="actionExport_Mkv_Sidecar"/>
     <addaction name="actionExport_Mkv_SidecarAll"/>
+    <addaction name="actionExport_Mkv_Cache"/>
+    <addaction name="actionExport_Mkv_CacheAll"/>
     <addaction name="menuLegacy_outputs"/>
     <addaction name="separator"/>
     <addaction name="actionSignalServer_status"/>
@@ -458,12 +460,28 @@
     <string>Ctrl+S</string>
    </property>
   </action>
+  <action name="actionExport_Mkv_Cache">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>To cache directory (.qctools.mkv)</string>
+   </property>
+  </action>
   <action name="actionExport_Mkv_SidecarAll">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
     <string>All open files to sidecar QCTools Report (.qctools.mkv)</string>
+   </property>
+  </action>
+  <action name="actionExport_Mkv_CacheAll">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>All open files to cached directory (.qctools.mkv)</string>
    </property>
   </action>
   <action name="actionPreferences">

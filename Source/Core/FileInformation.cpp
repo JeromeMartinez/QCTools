@@ -24,6 +24,7 @@
 #include <QUrl>
 #include <QBuffer>
 #include <QPair>
+#include <QDir>
 #include <zlib.h>
 #include <zconf.h>
 
@@ -244,6 +245,7 @@ const QMap<std::string, int> &FileInformation::panelOutputsByTitle() const
 
 FileInformation::FileInformation (SignalServer* signalServer, const QString &FileName_, activefilters ActiveFilters_, activealltracks ActiveAllTracks_,
                                   QMap<QString, std::tuple<QString, QString, QString, QString, int>> activePanels,
+                                  const QString &cacheFileNamePrefix,
                                   int FrameCount) :
     FileName(FileName_),
     ActiveFilters(ActiveFilters_),
@@ -339,6 +341,40 @@ FileInformation::FileInformation (SignalServer* signalServer, const QString &Fil
         {
             attachment = FFmpeg_Glue::getAttachment(FileName + dotQctoolsDotMkv, StatsFromExternalData_FileName);
             glueFileName = glueFileName + dotQctoolsDotMkv.toStdString();
+        }
+        else if (!cacheFileNamePrefix.isEmpty())
+        {
+            auto cacheFileName = QFileInfo(cacheFileNamePrefix).fileName();
+            QDir cacheDir = QFileInfo(cacheFileNamePrefix).absolutePath();
+            auto fileNameWithoutPath = QFileInfo(FileName).fileName();
+            while (cacheFileName.size() >= fileNameWithoutPath.size())
+            {
+                // Is there compatible file names in cache
+                auto list = cacheDir.entryList(QStringList(cacheFileName + "*" + dotQctoolsDotMkv), QDir::Files, QDir::Name);
+                if (list.size() == 1)
+                {
+                    attachment = FFmpeg_Glue::getAttachment(cacheDir.absolutePath() + "/" + list[0], StatsFromExternalData_FileName);
+                    glueFileName = (cacheDir.absolutePath() + "/" + list[0]).toStdString();
+                    break;
+                }
+                list = cacheDir.entryList(QStringList(cacheFileName + "*" + dotQctoolsDotXmlDotGz), QDir::Files, QDir::Name);
+                if (list.size() == 1)
+                {
+                    StatsFromExternalData_FileName = cacheDir.absolutePath() + "/" + list[0] + dotQctoolsDotXmlDotGz;
+                    StatsFromExternalData_FileName_IsCompressed = true;
+                    break;
+                }
+
+                for (auto cacheFileNamePos = cacheFileName.size() - 1; cacheFileNamePos; cacheFileNamePos--)
+                {
+                    auto Character = cacheFileName.at(cacheFileNamePos);
+                    if (Character == '.')
+                    {
+                        cacheFileName.resize(cacheFileNamePos);
+                        break;
+                    }
+                }
+            }
         }
     }
 
